@@ -92,7 +92,7 @@ export default function CardDetails() {
             <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2" htmlFor="card_number">
               Amount to deposit
             </label>
-            <NumberInput placeholder="1234.56" setValue={(value: number) => setData('amount', value)} />
+            <NumberInput placeholder="1234.56" value={data.amount} setValue={(value: number) => setData('amount', value)} />
             <InputError message={errors.amount} className="mt-1" />
           </div>
           <div className="mb-4 mt-2">
