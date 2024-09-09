@@ -2,7 +2,7 @@ import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import NumberInput from "@/Components/NumberInput";
-import axios from "axios";
+import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { useForm } from "@inertiajs/react";
 import { FormEventHandler, useEffect, useState } from "react";
@@ -39,29 +39,48 @@ export default function CardDetails() {
   const submit: FormEventHandler = async (e) => {
     e.preventDefault();
 
-    post(route('deposit.depositCash', { ...data }), {
-      onError: () => {
-        toast.error("Something went wrong...", {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          progress: undefined,
-        });
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Once deposited, your funds will be added to your account.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Confirm",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+      color: document.querySelector('html')?.classList.contains('dark') ? "#FFFFFF" : "#000000",
+      background: document.querySelector('html')?.classList.contains('dark') ? "#1F2937" : "#FFFFFF",
+      customClass: {
+        confirmButton: "bg-blue-500",
+        cancelButton: "bg-red-500",
       },
+      
+    }).then((result) => {
+      if (result.isConfirmed) {
+        post(route('deposit.depositCash', { ...data }), {
+          onError: () => {
+            toast.error("Something went wrong...", {
+              position: "bottom-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              progress: undefined,
+            });
+          },
 
-      onSuccess: () => {
-        toast.success('💰 Your cash is now available!', {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          progress: undefined,
+          onSuccess: () => {
+            toast.success('💰 Your cash is now available!', {
+              position: "bottom-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              progress: undefined,
+            });
+            reset();
+          },
         });
-        reset();
-      },
+      }
     });
   };
 
