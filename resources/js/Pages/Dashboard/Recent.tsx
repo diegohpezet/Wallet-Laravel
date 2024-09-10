@@ -14,9 +14,9 @@ export default function Recent({ currentUser, transfers }: RecentProps) {
 
   // Filter functionality
   const sortedTransfers = transfers.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-  const [ recentActivity, setRecentActivity ] = useState<TransferInterface[]>(sortedTransfers);
-  
-  
+  const [recentActivity, setRecentActivity] = useState<TransferInterface[]>(sortedTransfers);
+
+
   const handleCategoryChange = (category: string) => {
     switch (category) {
       case "History":
@@ -75,7 +75,7 @@ export default function Recent({ currentUser, transfers }: RecentProps) {
                       <p>Cash {isSender ? "sent" : "received"}</p>
                     </td>
                     <td className="px-6 py-4 text-end">
-                      <p className="font-bold text-red-500">- $ {transfer.amount}</p>
+                      { isSender ? <p className="font-bold text-red-500">- $ {transfer.amount}</p> : <p className="font-bold text-green-500">+ $ {transfer.amount}</p> }
                       <p>{transferDate}</p>
                     </td>
                   </tr>
