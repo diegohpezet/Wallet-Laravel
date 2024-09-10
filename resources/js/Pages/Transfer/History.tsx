@@ -9,15 +9,15 @@ interface HistoryProps {
 }
 
 export default function History({ transfers, currentUser }: HistoryProps) {
-  const { setAlias, setAccountName, setModalOpen } = useAccount();
+  const { setAccountName, setModalOpen, setAlias } = useAccount();
 
   const openTransferMenu = async (alias: string) => {
     try {
-      console.log(alias)
       const response = await axios.get(route('profile.getByAlias', alias));
 
       if (response.status === 200) {
         setAccountName(response.data.user.name);
+        setAlias(alias);
         setModalOpen(true);  // Abrir el modal aquí
       } else {
         setAccountName('');
