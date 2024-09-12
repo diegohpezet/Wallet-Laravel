@@ -8,8 +8,32 @@ interface HistoryProps {
   currentUser: User;
 }
 
+interface UsersHistory {
+  account: TransferInterface['receiver'];
+  created_at: TransferInterface['created_at'];
+}
+
 export default function History({ transfers, currentUser }: HistoryProps) {
   const { setAccountName, setModalOpen, setAlias } = useAccount();
+
+  // Filter transactions, to keep just the ones realized by the user
+  const usersHistory = Object.values(transfers.filter((transfer) => transfer.sender.id === currentUser.id).map((transfer) => {
+    // Remove unnecessary information
+    return {
+      account: transfer.receiver,
+      created_at: transfer.created_at
+    }
+  }).reduce((acc: { [key: number]: UsersHistory }, current) => {
+    // Remove repeated records
+    const accountId = current.account.id;
+
+    if (!acc[accountId] || new Date(acc[accountId].created_at) < new Date(current.created_at)) {
+      acc[accountId] = current;
+    }
+
+    return acc;
+  }, {})
+  ).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());  // Sort by date
 
   const openTransferMenu = async (alias: string) => {
     try {
@@ -34,15 +58,14 @@ export default function History({ transfers, currentUser }: HistoryProps) {
           <p className="py-2 font-bold text-gray-600 dark:text-gray-200">Recent activity</p>
         </div>
         <ul className="-mb-px text-sm font-medium text-gray-500 dark:text-gray-400">
-          {transfers.length === 0 ? (<li className="">There is nothing to show here....</li>) : (
-            transfers.map((transfer) => {
-              const isSender = transfer.sender.id === currentUser.id;
-              const account = isSender ? transfer.receiver : transfer.sender;
+          {usersHistory.length === 0 ? (<li className="">There is nothing to show here....</li>) : (
+            usersHistory.map((transfer) => {
+              const account = transfer.account
               const avatarUrl = `https://ui-avatars.com/api/?name=${account.name.split(" ")[0]}+${account.name.split(" ")[1]}&background=0D8ABC&color=fff`
               const date = new Date(transfer.created_at).toDateString();
 
               return (
-                <li key={transfer.id} onClick={(e) => {openTransferMenu(account.alias)}}>
+                <li key={transfer.account.id} onClick={(e) => { openTransferMenu(account.alias) }}>
                   <div className="flex py-3 px-2 hover:bg-slate-100 dark:hover:bg-gray-700 cursor-pointer">
                     <div className="flex-shrink-0">
                       <img
