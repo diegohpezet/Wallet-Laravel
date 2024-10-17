@@ -47,7 +47,7 @@ export default function SelectAccount() {
         <form onSubmit={submit}>
           <div className="py-6 px-6 text-gray-900 dark:text-gray-100">
             <label className="py-2 block font-medium text-gray-700 dark:text-gray-200 border-b">
-              Type in an account to transfer cash to
+              Type in an account alias to transfer cash to
             </label>
             <TextInput
               id="alias"
